@@ -2,7 +2,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
-
+import 		 Text.Blaze.Html.Renderer.String (renderHtml) 
+{-import 		 Text.Blaze.Html5 as H-}
+{-import 		 Text.Blaze.Html5.Attributes as A-}
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -11,15 +13,27 @@ main = hakyll $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "css/*" $ do
-        route   idRoute
-        compile compressCssCompiler
+    match "css/*.css" $ do
+	route   idRoute
+	compile compressCssCompiler
+ 
+    match "css/main.sass" $ do
+	route   $ setExtension "css"
+        compile $ getResourceString >>=
+            withItemBody (unixFilter "sass" ["-s"]) >>=
+            return . fmap compressCss  
 
     match (fromList ["about.rst", "contact.markdown"]) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
+    
+    match "test.md" $ do 
+		route   $ setExtension "html" 
+ 		compile $ do 
+                        tpl <- renderHtml $ loadBody "templates/default.hs"
+			pandocCompiler >>= applyTemplate tpl postCtx
 
     match "posts/*" $ do
         route $ setExtension "html"

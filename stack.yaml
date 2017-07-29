@@ -2,7 +2,7 @@
 #
 # Some commonly used options have been documented as comments in this file.
 # For advanced use and comprehensive documentation of the format, please see:
-# https://docs.haskellstack.org/en/stable/yaml_configuration/
+# http://docs.haskellstack.org/en/stable/yaml_configuration/
 
 # Resolver to choose a 'specific' stackage snapshot or a compiler version.
 # A snapshot resolver dictates the compiler version and the set of packages
@@ -36,7 +36,7 @@ resolver: lts-5.18
 # non-dependency (i.e. a user package), and its test suites and benchmarks
 # will not be run. This is useful for tweaking upstream packages.
 packages:
-- .
+- '.'
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
 extra-deps: []
@@ -52,7 +52,7 @@ extra-package-dbs: []
 #
 # Require a specific version of stack, using version ranges
 # require-stack-version: -any # Default
-# require-stack-version: ">=1.5"
+# require-stack-version: ">=1.4"
 #
 # Override the architecture used by stack, especially useful on Windows
 # arch: i386
