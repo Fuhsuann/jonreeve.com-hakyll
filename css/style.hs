@@ -1,9 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
-import           Clay
+import Clay
+import Prelude hiding (div)
 
 test :: Css
-test = body ?
+test = do
+  body ?
        do backgroundColor    blue
+          fontSize           (px 16)
+          width              (px 600)
+  div # "#header" ?
+       do borderBottom       solid (px 2) black
 
 main :: IO ()
 main = putCss test
