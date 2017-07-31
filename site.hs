@@ -18,12 +18,6 @@ main = hakyll $ do
         route   idRoute
         compile compressCssCompiler
 
-    match "css/main.sass" $ do
-        route   $ setExtension "css"
-        compile $ getResourceString >>=
-            withItemBody (unixFilter "sass" ["-s"]) >>=
-            return . fmap compressCss
-
     match "css/*.hs" $ do
       route   $ setExtension "css"
       compile $ getResourceString >>= withItemBody (unixFilter "runghc" [])
@@ -94,7 +88,7 @@ defaultTemplateRaw = html $ do
         meta ! httpEquiv "Content-Type" ! content "text/html; charset=UTF-8"
         H.title "My Hakyll Blog - $title$"
         link ! rel "stylesheet" ! type_ "text/css" ! href "/css/default.css"
-        link ! rel "stylesheet" ! type_ "text/css" ! href "/css/main.css"
+        link ! rel "stylesheet" ! type_ "text/css" ! href "/css/style.css"
     body $ do
         H.div ! A.id "header" $ do
             H.div ! A.id "logo" $ a ! href "/" $ "My Hakyll Blog"
