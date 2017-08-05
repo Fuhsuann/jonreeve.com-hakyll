@@ -91,7 +91,6 @@ defaultTemplateRaw = html $ do
     H.head $ do
         meta ! httpEquiv "Content-Type" ! content "text/html; charset=UTF-8"
         H.title "My Hakyll Blog - $title$"
-        link ! rel "stylesheet" ! type_ "text/css" ! href "/css/default.css"
         link ! rel "stylesheet" ! type_ "text/css" ! href "/css/style.css"
     body $ do
         H.div ! A.id "header" $ do
