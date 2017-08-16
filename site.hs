@@ -24,11 +24,6 @@ main = hakyll $ do
             withItemBody (unixFilter "sass" ["-s"]) >>=
             return . fmap compressCss 
 
-    -- Process Clay into CSS
-    match "css/*.hs" $ do
-      route   $ setExtension "css"
-      compile $ getResourceString >>= withItemBody (unixFilter "runghc" [])
-
     -- I can't figure out how to get this done properly 
     -- match "layouts/*.hs" $ do
     --   route   idRoute
