@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Macroetym: a Command-Line Tool for Macro-Etymological Textual Analysis
+title: "Macroetym: a Command-Line Tool for Macro-Etymological Textual Analysis"
 category: digital humanities
 tags: 
  - etymology

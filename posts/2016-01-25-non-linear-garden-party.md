@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Tag, Catalog, Iterate: A Non-Linear Analysis of Katherine Mansfield's "The Garden Party"
+title: "Tag, Catalog, Iterate: A Non-Linear Analysis of Katherine Mansfield's \"The Garden Party\""
 category: digital humanities
 tags:  
  - text analysis

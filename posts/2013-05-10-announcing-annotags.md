@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Announcing Annotags: A Concept for a Decentralized Literary Annotation Protocol
+title: "Announcing Annotags: A Concept for a Decentralized Literary Annotation Protocol"
 category: digital humanities
 tags: annotation
 permalink: /projects/annotags/about.html

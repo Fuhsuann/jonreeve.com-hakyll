@@ -1,5 +1,5 @@
 ---
-title: The Henry James Sentence: New Quantitative Approaches 
+title: "The Henry James Sentence: New Quantitative Approaches"
 category: digital humanities
 tags: 
  - sentences

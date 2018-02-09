@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Virginia Woolf's The Waves: A TEI Edition
+title: "Virginia Woolf's The Waves: A TEI Edition"
 category: digital humanities
 tags: 
   - tei
