@@ -25,6 +25,10 @@ main = hakyll $ do
     --   route   idRoute
     --   compile $ getResourceString >>= withItemBody (unixFilter "runghc" [])
 
+    match "css/*.hs" $ do
+      route   $ setExtension "css"
+      compile $ getResourceString >>= withItemBody (unixFilter "runghc" [])
+
     match "css/main.sass" $ do
         route   $ setExtension "css"
         compile $ getResourceString >>=
@@ -85,7 +89,7 @@ main = hakyll $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
-    match "templates/*" $ compile templateCompiler
+    -- match "templates/*" $ compile templateCompiler
 
 
 --------------------------------------------------------------------------------
@@ -127,9 +131,11 @@ defaultTemplateRaw = html $ do
     H.head $ do
         meta ! httpEquiv "Content-Type" ! content "text/html; charset=UTF-8"
         H.title "My Hakyll Blog - $title$"
-        link ! rel "stylesheet" ! type_ "text/css" ! href "/css/main.css"
-        link ! rel "stylesheet" ! type_ "text/css" ! href "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        link ! rel "stylesheet" ! type_ "text/css" ! href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" 
+        mapM_ ((link ! rel "stylesheet" ! type_ "text/css" !) . href)
+          ["https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+         , "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+         , "/css/style.css"
+         ]
     body $ do
         H.div ! A.class_ "container" $ do 
           H.nav ! A.class_ "navbar navbar-light bg-light" $ do
