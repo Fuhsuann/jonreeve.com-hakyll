@@ -1,10 +1,7 @@
 ---
 title: A Macro-Etymological Analysis of the Canterbury Tales 
 category: digital humanities
-tags: 
- - etymology
- - medieval
- - chaucer 
+tags: etymology, medieval, chaucer 
 ---
 
 Chaucer's *Canterbury Tales* exhibits one of the richest vocabularies of

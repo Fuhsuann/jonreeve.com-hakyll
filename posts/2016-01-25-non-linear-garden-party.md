@@ -2,9 +2,7 @@
 layout: post
 title: "Tag, Catalog, Iterate: A Non-Linear Analysis of Katherine Mansfield's \"The Garden Party\""
 category: digital humanities
-tags:  
- - text analysis
- - annotation
+tags: text analysis, annotation
 ---
 
 Works of literary criticism are typically built around their central arguments. The argument is often an opinion about a theme, function, or other textual attribute, and it is presented along with textual evidence that supports it. This usually means that a critical work closely examines textual details that are relevant to its thesis, while moving past or even ignoring less relevant details. Figure 1 shows a simplified illustration of this process. If each segment in the primary text contains details of types A, B, C, or D, a typical critical work will select one or more of these details for its analysis, while other details remain either less examined or fully unexamined.
@@ -21,7 +19,7 @@ Another notable work of iterative criticism is Roland Barthes's _S/Z_. Subtitled
 
 Here, Barthes catalogs the emergence of "Enigma 3," belonging to the hermeneutic code ("HER"). This enigma will make several more appearances in Barthes's essay, the set of which forms a critical narrative in miniature. While _S/Z_ is certainly meant to be read linearly, from beginning to end, these codes and enigmas form a network of non-linear subnarratives that provide alternate trajectories. In fact, one could almost call _S/Z_ a proto-hypertext, in that its layering and self-referentiality provide a multiplicity of pathyways through the critical discourse. According to a 1994 definition by computer scientists Frank Halasz and Mayer Schwartz, hypertext provides "the ability to create, manipulate, and/or examine a network of information containing nodes interconnected by relational links" (30). This is precisely what _S/Z_ accomplishes. One might even imagine that if Barthes had experience with a hypertext language like HTML, the codes and themes he cites might be linked together technologically as well as textually. That is one of the goals of the following experiment.
 
-#The Experiment
+# The Experiment
 
 The following is an experiment in iterative literary criticism, where the text of Katherine Mansfield's story "The Garden Party" is broken into 205 Barthesian lexias, annotated, and tagged. These tags are then linked to each other, forming miniature topic-based critical works. Clicking on a tag scrolls the page to the next annotation with that tag, and if there are no more, the page loops back to the first. A reader interested, in say, the semiotics of flowers in "The Garden Party" might read an annotation tagged "flora", while a reader interested in gender dynamics might choose the tag "sexuality." Since many lexia have more than one tag, the reader may switch between related tags once annotations with their first chosen tag have been exhausted. This effectively creates a non-linear critical work that more resembles a decision tree than a straight line. In this way, the reader effectively assembles his or her own critical narrative in the act of reading. A revised flowchart for this style of criticism might look something like Figure 2.
 
@@ -55,7 +53,7 @@ Many more quantitative literary analyses are made possible by this iterative app
 
 Iterative criticism is not meant to replace narrative criticism. Nor is it meant to represent the circumscribed totality of what can be said about a literary text. There are some birds-eye readings that simply do not fit into the sentence-level focus given here, and that is especially true of historical and biographical readings. But the insight gained from this inclusive, step-by-step technique might help us to discover things that the teleology of narrative criticism hides. It might help us to, in Barthes's words, "remain attentive to the plural of a text" (11).
 
-#Textual Notes
+# Textual Notes
 
 The text of Katherine Mansfield's story presented below is derived from [the GITenberg edition of _The Garden Party and Other Stories_]. The plain text was marked up using the Extensible Markup Language (XML) format of the [Text Encoding Initiative] (TEI). This format, the standard markup language for archival literary projects, is a semantic markup language---unlike markup languages like HTML 4.0, which describe how a text should *look*, i.e. `<i>The Garden Party</i>`, TEI XML describes what the text *is*, i.e. `<title>The Garden Party</title>`. This allows text segments to be selected based on their literary, rather than textual attributes.
 

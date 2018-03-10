@@ -2,12 +2,7 @@
 layout: post
 title: A Programmatic Generator for Pound's Cantos
 category: digital humanities
-tags: 
- - text analysis
- - python
- - generation
- - poetry
- - modernism
+tags: text analysis, python, generation, poetry, modernism
 ---
 
 ## Or, Computational Poetic Generation as Literary Analysis

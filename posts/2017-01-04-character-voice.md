@@ -1,13 +1,7 @@
 ---
 title: Detection of Character Voices in Fiction
 category: digital humanities
-tags: 
- - natural language processing
- - pca
- - statistics
- - text analysis
- - woolf
- - richardson
+tags: natural language processing, pca, statistics, text analysis, woolf, richardson
 ---
 
 In James Joyce's novel *Ulysses*, the school headmaster Mr. Deasy quotes

@@ -1,8 +1,7 @@
 ---
 title: A Project Gutenberg Database for Text Mining 
 category: digital humanities
-tags: 
- - corpora
+tags: corpora
 ---
 
 Project Gutenberg is a large store of public domain electronic texts, one which has been around since the 70s. Nearly everyone that has experimented with computational literary analysis has at some point used their electronic texts. Many digital humanists undoubtedly share my frustrations with it: its interface is clunky, its metadata is incomplete, and it's not very friendly to computational text extraction. Inspired by David McClure's textual databases, used at the Stanford Literary Lab, I decided to fix this by creating a structured database for Project Gutenberg's corpus, and augmenting it as much as possible with publicly-available book data. This database contains the complete cleaned text of each work, all its associated metadata, and additional metadata derived from GITenberg and Wikipedia. Here's an example entry, Dickens's novel _A Tale of Two Cities_: 

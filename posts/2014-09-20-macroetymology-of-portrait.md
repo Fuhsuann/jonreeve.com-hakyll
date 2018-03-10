@@ -2,7 +2,7 @@
 layout: post
 title: "Macro-Etymology of Bildungsroman: Joyce's Portrait"
 category: digital humanities
-tags: etymology joyce modernism
+tags: etymology, joyce, modernism
 ---
 
 _A Portrait of the Artist as a Young Man_, Joyce's Bildungsroman, is an experiment in style particularly well-suited to macro-etymological analysis. The narrative is written in the first person, and the language of the protagonist follows his age--early chapters are written in a juvenile voice, and later chapters are written with more mature language. The novel begins: "Once upon a time and a very good time it was there was a moocow coming down along the road..." Except for "very," which is descended from Anglo-French, all of these words are of Germanic origin. Later in the novel, there are lengthy discussions of religion which might introduce more Hellenic words, given that Hellenic words are correlated with religious speech in the Brown corpus.

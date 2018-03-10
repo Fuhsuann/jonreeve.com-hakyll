@@ -2,12 +2,7 @@
 layout: post
 title: A Macro-Etymological Analysis of Milton’s Paradise Lost
 category: digital humanities
-tags: 
- - etymology
- - text analysis
- - paper
- - poetry
- - early moderns
+tags: etymology, text analysis, paper, poetry, early moderns
 ---
 
 One of Milton’s terms for the expansive, empty gulf separating the Earth

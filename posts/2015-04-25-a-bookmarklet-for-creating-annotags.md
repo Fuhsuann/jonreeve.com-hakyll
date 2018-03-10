@@ -2,9 +2,7 @@
 layout: post
 title: A Bookmarklet For Creating Annotags
 category: digital humanities
-tags: 
- - annotation
- - open source
+tags: annotation, open source
 ---
 
 At [I Annotate](http://iannotate.org/) this weekend, I made a bookmarklet that will allow you to generate an [Annotag](/projects/annotags/about.html) from a book's bibliographic entry:

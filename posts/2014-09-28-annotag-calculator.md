@@ -2,8 +2,7 @@
 layout: post
 title: Annotag Calculator 1.0
 category: digital humanities
-tags: 
- - annotation
+tags: annotation
 ---
 
 Following [my initial spec for Annotags](/projects/annotags/about.html), a decentralized literary annotation protocol, I've just posted [the first rough version of a webapp](/projects/annotags/) designed to encode and decode the tags. Now you can annotweet books, plays, poems, and other texts with shortened ISBNs, thus saving precious microblogging characters.

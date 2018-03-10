@@ -2,10 +2,7 @@
 layout: post
 title: "Hacking at the Open Syllabus Project: Collocations by Subject"
 category: digital humanities
-tags: 
-  - natural language processing
-  - python
-  - text analysis
+tags: natural language processing, python, text analysis
 ---
 
 I was invited to hack around on the [Open Syllabus project](http://opensyllabusproject.org/) this past Saturday, which I was really excited to do. They've scraped the web and come up with around 1.5 million syllabi, and only just released their API to researchers this weekend. I wanted to run some computational analyses on these syllabi, to attempt questions like:
