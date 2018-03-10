@@ -12,7 +12,15 @@ import System.FilePath.Posix (takeBaseName,takeDirectory,(</>))
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
-    match "images/*" $ do
+    match "images/**/*" $ do
+        route   idRoute
+        compile copyFileCompiler
+
+    match "assets/**/*" $ do
+        route   idRoute
+        compile copyFileCompiler
+
+    match "presentations/**/*" $ do
         route   idRoute
         compile copyFileCompiler
 
@@ -42,37 +50,68 @@ main = hakyll $ do
             pandocCompiler >>= applyTemplate defaultTemplate postCtx
 
     match "posts/*" $ do
-        route $ niceRoute
+        tags <- buildTags "posts/*" (fromCapture "tags/*.html")
+        -- Generate tags pages for each tag
+        tagsRules tags $ \tag pat -> do
+            let title = "Posts tagged \"" ++ tag ++ "\""
+            route idRoute
+            compile $ do
+                posts <- recentFirst =<< loadAll pat
+                let ctx = constField "title" title
+                          `mappend` listField "posts" postCtx (return posts)
+                          `mappend` defaultContext
+                makeItem ""
+                    >>= applyTemplate postListTemplate ctx
+                    >>= applyTemplate defaultTemplate ctx
+                    >>= relativizeUrls
+        route niceRoute
         compile $ pandocCompiler
-            >>= applyTemplate postTemplate postCtx
-            >>= applyTemplate defaultTemplate defaultContext
-            >>= relativizeUrls
-            >>= cleanIndexUrls
+          >>= applyTemplate postTemplate (postCtxWithTags tags)
+          >>= saveSnapshot "content" -- for RSS
+          >>= applyTemplate defaultTemplate defaultContext
+          >>= relativizeUrls
+          >>= cleanIndexUrls
 
-    create ["archive/index.html"] $ do
-        route idRoute
-        compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
-            let archiveCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Archives"            `mappend`
-                    defaultContext
+    -- TODO: Tags page listing all tags
+    -- create ["/tags.html"] $ do
+    --     route idRoute
+    --     compile $ do
+    --         tags <- buildTags "posts/*" (fromCapture "tags.html#*")
+    --         let tagsCtx =
+    --                 listField "tags" postCtx (return tags) `mappend`
+    --                 constField "title" "Tags"            `mappend`
+    --                 defaultContext
+    --         makeItem ""
+    --             >>= applyTemplate postListTemplate tagsCtx
+    --             >>= applyTemplate defaultTemplate defaultContext
+    --             >>= relativizeUrls
+    --             >>= cleanIndexUrls
 
-            makeItem ""
-                >>= applyTemplate postListTemplate archiveCtx
-                >>= applyTemplate defaultTemplate defaultContext
-                >>= relativizeUrls
-                >>= cleanIndexUrls
+    -- Disabling archive for now. 
+    -- create ["archive/index.html"] $ do
+    --     route idRoute
+    --     compile $ do
+    --         posts <- recentFirst =<< loadAll "posts/*"
+    --         let archiveCtx =
+    --                 listField "posts" postCtx (return posts) `mappend`
+    --                 constField "title" "Archives"            `mappend`
+    --                 defaultContext
+
+    --         makeItem ""
+    --             >>= applyTemplate postListTemplate archiveCtx
+    --             >>= applyTemplate defaultTemplate defaultContext
+    --             >>= relativizeUrls
+    --             >>= cleanIndexUrls
 
     match "index.html" $ do
         route idRoute
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
+            tags <- buildTags "posts/*" (fromCapture "tags/*.html")
             let indexCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Home"                `mappend`
+                    listField "posts" (postCtxWithTags tags) (return posts) `mappend`
+                    constField "title" "Posts"                `mappend`
                     defaultContext
-
             makeItem ""
                 >>= applyTemplate postListTemplate indexCtx
                 >>= applyTemplate defaultTemplate defaultContext
@@ -81,8 +120,24 @@ main = hakyll $ do
 
     -- match "templates/*" $ compile templateCompiler
 
+    create ["atom.xml"] $ do
+        route idRoute
+        compile $ do
+            let feedCtx = postCtx `mappend` bodyField "description" 
+            posts <- fmap (take 10) . recentFirst =<< loadAllSnapshots "posts/*" "content"
+            renderAtom myFeedConfiguration feedCtx posts
 
+    create ["feed.xml"] $ do
+        route idRoute
+        compile $ do
+            let feedCtx = postCtx `mappend` bodyField "description" 
+            posts <- fmap (take 10) . recentFirst =<< loadAllSnapshots "posts/*" "content"
+            renderRss myFeedConfiguration feedCtx posts
 --------------------------------------------------------------------------------
+
+-- Add tags to post context.
+postCtxWithTags :: Tags -> Context String
+postCtxWithTags tags = tagsField "tags" tags `mappend` postCtx
 
 -- This creates permalinks in the form /YYYY/MM/permalink-to-blog-post/index.html
 -- Assuming that post filenames are in the form YYYY-MM-permalink-to-blog-post.md
@@ -113,6 +168,17 @@ postCtx =
     dateField "date" "%0Y-%m-%d" `mappend`
     defaultContext
 
+-- Atom / RSS Config
+myFeedConfiguration :: FeedConfiguration
+myFeedConfiguration = FeedConfiguration
+    { feedTitle       = "Jonathan Reeve: Computational Literary Analysis"
+    , feedDescription = "Personal website of Jonathan Reeve, with blog posts about computational literary analysis."
+    , feedAuthorName  = "Jonathan Reeve"
+    , feedAuthorEmail = "jon.reeve@gmail.com"
+    , feedRoot        = "http://jonreeve.com"
+    }
+
+-- Templates
 defaultTemplate :: Template
 defaultTemplate = readTemplate . renderHtml $ defaultTemplateRaw
 
@@ -120,7 +186,7 @@ defaultTemplateRaw :: Html
 defaultTemplateRaw = html $ do
     H.head $ do
         meta ! httpEquiv "Content-Type" ! content "text/html; charset=UTF-8"
-        H.title "My Hakyll Blog - $title$"
+        H.title "Jonathan Reeve: $title$"
         mapM_ ((link ! rel "stylesheet" ! type_ "text/css" !) . href)
           ["https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
          , "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -128,19 +194,18 @@ defaultTemplateRaw = html $ do
          , "/css/style.css"
          ]
     body $ do
-        H.div ! A.class_ "container" $ do 
+        H.div ! A.class_ "container-fluid" $ do
           H.nav ! A.class_ "navbar navbar-expand-lg navbar-dark stylish-color" $ do
-              H.a ! A.class_ "navbar-brand" ! href "/" $ "Jonathan Reeve"
+              H.a ! A.class_ "navbar-brand" ! href "/" $ "Jonathan Reeve: computational literary analysis"
               H.ul ! A.class_ "nav navbar-nav ml-auto" $ do
-                  a ! A.class_ "nav-link active" ! href "/" $ "Home"
-                  a ! A.class_ "nav-link" ! href "/about" $ "About"
+                  a ! A.class_ "nav-link active" ! href "/" $ "Posts"
                   a ! A.class_ "nav-link" ! href "/cv" $ "CV"
-                  a ! A.class_ "nav-link" ! href "/archive" $ "Archive"
+                  a ! A.class_ "nav-link" ! href "/tags" $ "Tags"
           H.div ! A.id "content" ! A.class_ "container" $ do
               h1 "$title$"
               "$body$"
-        H.footer ! A.class_ "page-footer stylish-color-dark container" $ do
-          H.div ! A.class_ "row" $ do
+        H.footer ! A.class_ "page-footer stylish-color-dark container-fluid" $ do
+          H.div ! A.class_ "row container-fluid" $ do
             H.div ! A.class_ "col" $ do
               "This work is licensed under a "
               a ! href "http://creativecommons.org/licenses/by-nc-sa/4.0/" $
@@ -165,14 +230,22 @@ postListTemplateRaw =
   ul $ do
     "$for(posts)$"
     li ! A.class_ "" $ do
+        "$date$: "
         a ! href "$url$" $ "$title$"
-        "- $date$"
+        p ! class_ "taglist" $ "$if(tags)$ Tags: $tags$ $endif$"
     "$endfor$"
 
 postTemplate :: Template
 postTemplate = readTemplate . renderHtml $ postTemplateRaw
 
 postTemplateRaw :: Html
-postTemplateRaw = H.div ! class_ "info" $ do
-  "Posted on $date$\n"
-  "$body$"
+postTemplateRaw = H.section ! class_ "container" $ do
+  div ! class_ "container" $ do 
+    section ! class_ "info" $ do 
+      "Posted on $date$\n"
+      "$if(tags)$"
+      "Tags: $tags$"
+      "$endif$"
+    section ! class_ "postBody" $ do 
+      "$body$"
+

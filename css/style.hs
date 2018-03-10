@@ -4,10 +4,21 @@ import Prelude hiding (div, rem)
 
 test :: Css
 test = do
-  div # "#content" ? 
+  body ?
+    fontSize (pct 150)
+  figure ? do
+    textAlign center
+    img ? do
+      maxWidth (pct 100)
+    figcaption ? do
+      fontSize (pct 90)
+  div # "#content" ?
     sym2 padding (rem 2) (rem 2)
+  section # ".info" ?
+    sym margin (rem 1)
   footer ? do
     sym padding (rem 3)
+    fontSize (rem 1.1)
     div # "#social" ?
       do display        flex
          alignItems     center
