@@ -65,7 +65,7 @@ main = hakyll $ do
                     >>= applyTemplate defaultTemplate ctx
                     >>= relativizeUrls
         route niceRoute
-        compile $ pandocCompiler
+        compile $ do pandocCompiler
           >>= applyTemplate postTemplate (postCtxWithTags tags)
           >>= saveSnapshot "content" -- for RSS
           >>= applyTemplate defaultTemplate defaultContext
@@ -73,19 +73,15 @@ main = hakyll $ do
           >>= cleanIndexUrls
 
     -- TODO: Tags page listing all tags
-    -- create ["/tags.html"] $ do
-    --     route idRoute
-    --     compile $ do
-    --         tags <- buildTags "posts/*" (fromCapture "tags.html#*")
-    --         let tagsCtx =
-    --                 listField "tags" postCtx (return tags) `mappend`
-    --                 constField "title" "Tags"            `mappend`
-    --                 defaultContext
-    --         makeItem ""
-    --             >>= applyTemplate postListTemplate tagsCtx
-    --             >>= applyTemplate defaultTemplate defaultContext
-    --             >>= relativizeUrls
-    --             >>= cleanIndexUrls
+    create ["tags.html"] $ do
+        route idRoute
+        tags <- buildTags "posts/*" (fromCapture "tags.html")
+        compile $
+            makeItem ""
+                >>= applyTemplate tagListTemplate defaultContext
+                >>= applyTemplate defaultTemplate defaultContext
+                >>= relativizeUrls
+                >>= cleanIndexUrls
 
     -- Disabling archive for now. 
     -- create ["archive/index.html"] $ do
@@ -188,9 +184,8 @@ defaultTemplateRaw = html $ do
         meta ! httpEquiv "Content-Type" ! content "text/html; charset=UTF-8"
         H.title "Jonathan Reeve: $title$"
         mapM_ ((link ! rel "stylesheet" ! type_ "text/css" !) . href)
-          ["https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-         , "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-         , "https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/css/mdb.css"
+          ["https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+         , "/assets/css/vendor/skeleton.css"
          , "/css/style.css"
          ]
     body $ do
@@ -240,12 +235,22 @@ postTemplate = readTemplate . renderHtml $ postTemplateRaw
 
 postTemplateRaw :: Html
 postTemplateRaw = H.section ! class_ "container" $ do
-  div ! class_ "container" $ do 
-    section ! class_ "info" $ do 
+  div ! class_ "container" $ do
+    section ! class_ "info" $ do
       "Posted on $date$\n"
       "$if(tags)$"
       "Tags: $tags$"
       "$endif$"
-    section ! class_ "postBody" $ do 
+    section ! class_ "postBody" $ do
       "$body$"
 
+tagListTemplate = readTemplate . renderHtml $ tagListTemplateRaw
+
+tagListTemplateRaw :: Html
+tagListTemplateRaw =
+  ul $ do
+    "$for(tags)$"
+    "$tag$"
+    li ! A.class_ "" $ do
+        a ! href "$url$" $ "$title$"
+    "$endfor$"
