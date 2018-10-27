@@ -51,19 +51,6 @@ main = hakyll $ do
 
     match "posts/*" $ do
         tags <- buildTags "posts/*" (fromCapture "tags/*.html")
-        -- Generate tags pages for each tag
-        tagsRules tags $ \tag pat -> do
-            let title = "Posts tagged \"" ++ tag ++ "\""
-            route idRoute
-            compile $ do
-                posts <- recentFirst =<< loadAll pat
-                let ctx = constField "title" title
-                          `mappend` listField "posts" postCtx (return posts)
-                          `mappend` defaultContext
-                makeItem ""
-                    >>= applyTemplate postListTemplate ctx
-                    >>= applyTemplate defaultTemplate ctx
-                    >>= relativizeUrls
         route niceRoute
         compile $ do pandocCompiler
           >>= applyTemplate postTemplate (postCtxWithTags tags)
@@ -75,13 +62,14 @@ main = hakyll $ do
     -- TODO: Tags page listing all tags
     create ["tags.html"] $ do
         route idRoute
-        tags <- buildTags "posts/*" (fromCapture "tags.html")
-        compile $
+        tags <- buildTags "posts/*" (fromCapture "tags.html#")
+        let tagList = tagsMap tags
+        compile $ do
             makeItem ""
-                >>= applyTemplate tagListTemplate defaultContext
-                >>= applyTemplate defaultTemplate defaultContext
-                >>= relativizeUrls
-                >>= cleanIndexUrls
+              >>= applyTemplate tagListTemplate (defaultCtxWithTags tags)
+              -- >>= applyTemplate defaultTemplate defaultContext
+              -- >>= relativizeUrls
+              -- >>= cleanIndexUrls
 
     -- Disabling archive for now. 
     -- create ["archive/index.html"] $ do
@@ -134,6 +122,10 @@ main = hakyll $ do
 -- Add tags to post context.
 postCtxWithTags :: Tags -> Context String
 postCtxWithTags tags = tagsField "tags" tags `mappend` postCtx
+
+-- Add tags to default context, for tag listing
+defaultCtxWithTags :: Tags -> Context String
+defaultCtxWithTags tags = listField "tags" defaultContext (return (tagsMap tags)) `mappend` defaultContext
 
 -- This creates permalinks in the form /YYYY/MM/permalink-to-blog-post/index.html
 -- Assuming that post filenames are in the form YYYY-MM-permalink-to-blog-post.md
