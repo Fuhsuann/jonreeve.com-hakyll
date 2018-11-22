@@ -1,5 +1,6 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ViewPatterns #-}
 import Data.Monoid (mappend)
 import Prelude hiding ( div, span )
 import Control.Monad (forM_)
@@ -49,8 +50,9 @@ main = hakyll $ do
         compile $ do
             pandocCompiler >>= applyTemplate defaultTemplate postCtx
 
+    tags <- buildTags "posts/*" (fromCapture "tags/*.html")
+
     match "posts/*" $ do
-        tags <- buildTags "posts/*" (fromCapture "tags/*.html")
         route niceRoute
         compile $ do pandocCompiler
           >>= applyTemplate postTemplate (postCtxWithTags tags)
@@ -62,7 +64,6 @@ main = hakyll $ do
     -- TODO: Tags page listing all tags
     create ["tags.html"] $ do
         route idRoute
-        tags <- buildTags "posts/*" (fromCapture "tags.html#")
         let tagList = tagsMap tags
         compile $ do
             makeItem ""
@@ -91,7 +92,6 @@ main = hakyll $ do
         route idRoute
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
-            tags <- buildTags "posts/*" (fromCapture "tags/*.html")
             let indexCtx =
                     listField "posts" (postCtxWithTags tags) (return posts) `mappend`
                     constField "title" "Posts"                `mappend`
@@ -117,6 +117,19 @@ main = hakyll $ do
             let feedCtx = postCtx `mappend` bodyField "description" 
             posts <- fmap (take 10) . recentFirst =<< loadAllSnapshots "posts/*" "content"
             renderRss myFeedConfiguration feedCtx posts
+
+    tagsRules tags $ \tag pat -> do
+        route idRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll pat
+            let postCtx = postCtxWithTags tags
+                postsField = listField "posts" postCtx (pure posts)
+                titleField = constField "title" ("Posts tagged \""++tag++"\"")
+                indexCtx = postsField <> titleField <> defaultContext
+            makeItem "" >>= applyTemplate postListTemplate indexCtx
+                        >>= applyTemplate defaultTemplate defaultContext
+                        >>= relativizeUrls
+                        >>= cleanIndexUrls
 --------------------------------------------------------------------------------
 
 -- Add tags to post context.
@@ -125,7 +138,24 @@ postCtxWithTags tags = tagsField "tags" tags `mappend` postCtx
 
 -- Add tags to default context, for tag listing
 defaultCtxWithTags :: Tags -> Context String
-defaultCtxWithTags tags = listField "tags" defaultContext (return (tagsMap tags)) `mappend` defaultContext
+defaultCtxWithTags tags = listField "tags" tagsCtx getAllTags         `mappend`
+                          defaultContext
+  where getAllTags :: Compiler [Item (String, [Identifier])]
+        getAllTags = mapM (pure . mkItem) $ tagsMap tags
+          where mkItem :: (String, [Identifier]) -> Item (String, [Identifier])
+                mkItem x@(t, _) = Item (tagsMakeId tags t) x
+        tagsCtx :: Context (String, [Identifier])
+        tagsCtx = listFieldWith "posts" postsCtx getPosts             `mappend`
+                  metadataField                                       `mappend`
+                  urlField "url"                                      `mappend`
+                  pathField "path"                                    `mappend`
+                  titleField "title"                                  `mappend`
+                  missingField
+          where getPosts :: Item (String, [Identifier])
+                         -> Compiler [Item String]
+                getPosts (itemBody -> (_, is)) = mapM load is
+                postsCtx :: Context String
+                postsCtx = postCtxWithTags tags
 
 -- This creates permalinks in the form /YYYY/MM/permalink-to-blog-post/index.html
 -- Assuming that post filenames are in the form YYYY-MM-permalink-to-blog-post.md
@@ -242,7 +272,11 @@ tagListTemplateRaw :: Html
 tagListTemplateRaw =
   ul $ do
     "$for(tags)$"
-    "$tag$"
     li ! A.class_ "" $ do
         a ! href "$url$" $ "$title$"
+        ul $ do
+          "$for(posts)$"
+          li ! A.class_ "" $ do
+            a ! href "$url$" $ "$title$"
+          "$endfor$"
     "$endfor$"
